@@ -25,9 +25,33 @@
   <version>1.0-SNAPSHOT</version>
   <properties>
     <activemq.version>5.9.0</activemq.version>
+    <broker.host>localhost</broker.host>
     <config.type>throughput</config.type>
+    <socketBufferSize>524288</socketBufferSize>
+    <ioBufferSize>131072</ioBufferSize>
+    <role>producer</role>
+    <count>10000</count>
+    <id></id>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>io.fabric8.mq</groupId>
+      <artifactId>mq-client</artifactId>
+      <version>1.1.0.Beta6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-osgi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+      <version>${activemq.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -41,11 +65,11 @@
           <systemProperties>
             <property>
               <name>socketBufferSize</name>
-              <value>524288</value>
+              <value>${socketBufferSize}</value>
             </property>
             <property>
               <name>ioBufferSize</name>
-              <value>131072</value>
+              <value>${ioBufferSize}</value>
             </property>
             <property>
               <name>log4j.configuration</name>
@@ -60,6 +84,28 @@
             <version>3.2.8.RELEASE</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.3.1</version>
+           <configuration>
+            <mainClass>io.fabric8.mq.Main</mainClass>
+            <arguments>
+             <argument>${role}</argument>
+             <argument>--destination</argument>
+              <argument>T${id}</argument>
+             <argument>--size</argument>
+              <argument>65536</argument>
+             <argument>--count</argument>
+              <argument>${count}</argument>
+             <argument>--persistent</argument>
+              <argument>false</argument>
+             <argument>--brokerUrl</argument>
+              <argument>tcp://${broker.host}:61616?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+            </arguments>
+           </configuration>
       </plugin>
     </plugins>
   </build>
