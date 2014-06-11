@@ -24,7 +24,7 @@
   <artifactId>broker-run</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
-    <activemq.version>5.9.0</activemq.version>
+    <activemq.version>5.10.0</activemq.version>
     <broker.host>localhost</broker.host>
     <config.type>throughput</config.type>
     <socketBufferSize>524288</socketBufferSize>
