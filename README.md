@@ -9,7 +9,7 @@ A maven pom that will start an activemq instance in vm
 
  **Start a broker**
 
-    $> mvn activemq:run -Dactivemq.version=5.11-SNAPSHOT
+    $> mvn activemq:run -Dactivemq.version=5.10.0
 
  **run a client to consume 10000 messages**
 
