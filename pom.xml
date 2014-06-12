@@ -30,7 +30,7 @@
     <socketBufferSize>524288</socketBufferSize>
     <ioBufferSize>131072</ioBufferSize>
     <role>producer</role>
-    <count>10000</count>
+    <count>500000</count>
     <id></id>
   </properties>
 
