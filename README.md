@@ -9,13 +9,17 @@ A maven pom that will start an activemq instance in vm
 
  **Start a broker**
 
-    $> mvn activemq:run -Dactivemq.version=5.10.0
+    $> mvn -Pbroker
+
+ **run a producer-consumer pair**
+
+    $> mvn -Ppair
 
  **run a client to consume 10000 messages**
 
-    $> mvn exec:java -Drole=consumer
+    $> mvn -Pclient -Drole=consumer
 
  **produce**
 
-    $> mvn exec:java -Drole=producer
+    $> mvn -Pclient -Drole=producer
 
