@@ -61,7 +61,7 @@
 
         <transportConnectors>
             <transportConnector name="openwire"
-                                uri="tcp://0.0.0.0:61616?transport.useInactivityMonitor=false&amp;transport.socketBufferSize=${socketBufferSize}&amp;transport.ioBufferSize=${ioBufferSize}" />
+                                uri="tcp://${brokerHost}:${brokerPort}?transport.useInactivityMonitor=false&amp;transport.socketBufferSize=${socketBufferSize}&amp;transport.ioBufferSize=${ioBufferSize}" />
         </transportConnectors>
 
     </broker>

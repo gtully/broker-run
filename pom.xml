@@ -26,9 +26,12 @@
   <properties>
     <activemq.version>5.10.0</activemq.version>
     <broker.host>localhost</broker.host>
+    <broker.port>61616</broker.port>
     <config.type>throughput</config.type>
     <socketBufferSize>524288</socketBufferSize>
     <ioBufferSize>131072</ioBufferSize>
+    <brokerHost>${broker.host}</brokerHost>
+    <brokerPort>${broker.port}</brokerPort>
     <role>producer</role>
     <count>500000</count>
     <messageSize>65536</messageSize>
@@ -87,7 +90,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:61616?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -124,7 +127,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:61616?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -152,6 +155,14 @@
                   <configUri>xbean:file:conf/activemq-${config.type}.xml</configUri>
                   <fork>false</fork>
                   <systemProperties>
+                    <property>
+                      <name>brokerPort</name>
+                      <value>${broker.port}</value>
+                    </property>
+                    <property>
+                      <name>brokerHost</name>
+                      <value>${broker.host}</value>
+                    </property>
                     <property>
                       <name>socketBufferSize</name>
                       <value>${socketBufferSize}</value>
