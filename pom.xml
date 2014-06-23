@@ -35,8 +35,35 @@
     <role>producer</role>
     <count>500000</count>
     <messageSize>65536</messageSize>
+    <queuePrefetch>1000</queuePrefetch>
     <id></id>
   </properties>
+  <repositories>
+  <repository>
+       <id>ea.fusesource.org</id>
+       <name>FuseSource Community Early Access Release Repository</name>
+       <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+       <snapshots>
+        <enabled>false</enabled>
+       </snapshots>
+       <releases>
+        <enabled>true</enabled>
+       </releases>
+      </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource Community Early Access Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+      <snapshots>
+       <enabled>false</enabled>
+      </snapshots>
+      <releases>
+       <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
 
   <dependencies>
     <dependency>
@@ -90,7 +117,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -127,7 +154,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=1000&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
