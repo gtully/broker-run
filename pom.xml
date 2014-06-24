@@ -32,6 +32,7 @@
     <ioBufferSize>131072</ioBufferSize>
     <brokerHost>${broker.host}</brokerHost>
     <brokerPort>${broker.port}</brokerPort>
+    <localHostPort>/localhost:0</localHostPort>
     <role>producer</role>
     <count>500000</count>
     <messageSize>65536</messageSize>
@@ -117,7 +118,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${brokerHost}:${brokerPort}${localHostPort}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -154,7 +155,7 @@
                     <argument>--persistent</argument>
                     <argument>false</argument>
                     <argument>--brokerUrl</argument>
-                    <argument>tcp://${broker.host}:${broker.port}?useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
+                    <argument>tcp://${broker.host}:${broker.port}${localHostPort}??useInactivityMonitor=false&amp;jms.watchTopicAdvisories=false&amp;jms.useAsyncSend=true&amp;jms.alwaysSessionAsync=true&amp;jms.dispatchAsync=true&amp;jms.alwaysSyncSend=false&amp;jms.prefetchPolicy.queuePrefetch=${queuePrefetch}&amp;jms.copyMessageOnSend=false&amp;jms.messagePrioritySupported=false&amp;socketBufferSize=${socketBufferSize}&amp;ioBufferSize=${ioBufferSize}</argument>
                   </arguments>
                 </configuration>
               </execution>
