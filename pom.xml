@@ -25,6 +25,7 @@
   <version>1.0-SNAPSHOT</version>
   <properties>
     <activemq.version>5.10.0</activemq.version>
+    <hawtjms.version>1.0-SNAPSHOT</hawtjms.version>
     <broker.host>0.0.0.0</broker.host>
     <broker.port>61616</broker.port>
     <config.type>throughput</config.type>
@@ -88,11 +89,61 @@
       <artifactId>activemq-client</artifactId>
       <version>${activemq.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawtjms</groupId>
+      <artifactId>hawtjms-core</artifactId>
+      <version>${hawtjms.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawtjms</groupId>
+      <artifactId>hawtjms-amqp</artifactId>
+      <version>${hawtjms.version}</version>
+    </dependency>
   </dependencies>
 
   <profiles>
     <profile>
       <id>pair</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-classpath</argument>
+                    <classpath/>
+                    <argument>org.gtully.jms.ThroughPut</argument>
+                    <argument>amqp</argument>
+                    <argument>--destination</argument>
+                    <argument>SomeQueue${id}</argument>
+                    <argument>--size</argument>
+                    <argument>${messageSize}</argument>
+                    <argument>--count</argument>
+                    <argument>${count}</argument>
+                    <argument>--persistent</argument>
+                    <argument>false</argument>
+                    <argument>--brokerUrl</argument>
+                    <argument>amqp://${brokerHost}:${brokerPort}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>openwire-pair</id>
       <build>
         <defaultGoal>verify</defaultGoal>
         <plugins>
@@ -201,7 +252,7 @@
                     </property>
                     <property>
                       <name>log4j.configuration</name>
-                      <value>${project.baseUri}conf/log4j.properties</value>
+                      <value>${project.baseUri}target/classes/log4j.properties</value>
                     </property>
                   </systemProperties>
                 </configuration>
@@ -212,6 +263,11 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>3.2.8.RELEASE</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-amqp</artifactId>
+                <version>${activemq.version}</version>
               </dependency>
             </dependencies>
           </plugin>
