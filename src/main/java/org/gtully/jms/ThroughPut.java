@@ -92,7 +92,7 @@ public class ThroughPut {
             });
         }
 
-        //TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(1);
         for (int i = 0; i < parallelProducer; i++) {
             executorService.execute(new Runnable() {
                 @Override
@@ -145,9 +145,7 @@ public class ThroughPut {
         Queue queue = session.createQueue(destination);
 
         MessageProducer producer = session.createProducer(queue);
-        if (!persistent) {
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-        }
+        producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
         Message message = session.createBytesMessage();
         ((BytesMessage) message).writeBytes(payloadString.getBytes());
 

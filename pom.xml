@@ -36,7 +36,7 @@
     <localHostPort>/localhost:0</localHostPort>
     <role>producer</role>
     <count>500000</count>
-    <messageSize>65536</messageSize>
+    <messageSize>1024</messageSize>
     <queuePrefetch>1000</queuePrefetch>
     <id></id>
   </properties>
