@@ -49,6 +49,7 @@ public class ThroughPut {
     private static int count = 100000;
     private static long sleep;
     private static String destination = "TestQueue";
+    private static int destMod = 0;
     private static String brokerUrl;
     private static String user;
     private static String password;
@@ -83,11 +84,12 @@ public class ThroughPut {
         ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumers + parallelProducers);
 
         for (int i = 0; i < parallelConsumers; i++) {
+            final int id = i;
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        consumeMessages(sharedReceiveCount);
+                        consumeMessages(id, sharedReceiveCount);
                     } catch (Exception e) {
                         exceptions.add(e);
                     }
@@ -96,11 +98,12 @@ public class ThroughPut {
         }
 
         for (int i = 0; i < parallelProducers; i++) {
+            final int id = i;
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        publishMessages(sharedSendCount);
+                        publishMessages(id, sharedSendCount);
                     } catch (Exception e) {
                         exceptions.add(e);
                     }
@@ -128,11 +131,11 @@ public class ThroughPut {
         return connectionFactory;
     }
 
-    private void consumeMessages(AtomicLong count) throws Exception {
+    private void consumeMessages(int id, AtomicLong count) throws Exception {
         Connection connection = factory.createConnection(user, password);
         connection.start();
         Session session = connection.createSession(false, ActiveMQSession.AUTO_ACKNOWLEDGE);
-        Queue queue = session.createQueue(destination);
+        Queue queue = session.createQueue(destinationName(id, destination));
         MessageConsumer consumer = session.createConsumer(queue);
         Message message;
         long c;
@@ -149,11 +152,11 @@ public class ThroughPut {
         consumer.close();
     }
 
-    private void publishMessages(AtomicLong count) throws Exception {
+    private void publishMessages(int id, AtomicLong count) throws Exception {
         Connection connection = factory.createConnection(user, password);
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Queue queue = session.createQueue(destination);
+        Queue queue = session.createQueue(destinationName(id, destination));
 
         MessageProducer producer = session.createProducer(queue);
         producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
@@ -171,6 +174,14 @@ public class ThroughPut {
         }
         producer.close();
         connection.close();
+    }
+
+    private String destinationName(int id, String destination) {
+        if (destMod > 0) {
+            return destination + "_" + (id % destMod);
+        } else {
+            return destination;
+        }
     }
 
     private static void processArgs(String[] args) {
@@ -200,6 +211,8 @@ public class ThroughPut {
                     ThroughPut.parallelProducers = Integer.parseInt(shift(arg1));
                 } else if ("--parallelConsumers".equals(arg)) {
                     ThroughPut.parallelConsumers = Integer.parseInt(shift(arg1));
+                } else if ("--destMod".equals(arg)) {
+                    ThroughPut.destMod = Integer.parseInt(shift(arg1));
                 } else if ("--clientId".equals(arg)) {
                     ThroughPut.clientId = shift(arg1);
                 } else if ("--persistent".equals(arg)) {

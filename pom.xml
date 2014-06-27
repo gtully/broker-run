@@ -38,6 +38,7 @@
     <count>50000</count>
     <messageSize>20480</messageSize>
     <parallel>6</parallel>
+    <numDests>0</numDests>
     <queuePrefetch>500</queuePrefetch>
     <id></id>
   </properties>
@@ -123,6 +124,8 @@
                   <arguments>
                     <argument>-classpath</argument>
                     <classpath/>
+                    <argument>-Xmx1g</argument>
+                    <argument>-Xms1g</argument>
                     <argument>org.gtully.jms.ThroughPut</argument>
                     <argument>amqp</argument>
                     <argument>--destination</argument>
@@ -135,6 +138,8 @@
                     <argument>true</argument>
                     <argument>--parallelParis</argument>
                     <argument>${parallel}</argument>
+                    <argument>--destMod</argument>
+                    <argument>${numDests}</argument>
                     <argument>--brokerUrl</argument>
                     <argument>amqp://${brokerHost}:${brokerPort}</argument>
                   </arguments>
