@@ -35,9 +35,10 @@
     <brokerPort>${broker.port}</brokerPort>
     <localHostPort>/localhost:0</localHostPort>
     <role>producer</role>
-    <count>500000</count>
-    <messageSize>1024</messageSize>
-    <queuePrefetch>1000</queuePrefetch>
+    <count>50000</count>
+    <messageSize>20480</messageSize>
+    <parallel>6</parallel>
+    <queuePrefetch>500</queuePrefetch>
     <id></id>
   </properties>
   <repositories>
@@ -131,7 +132,9 @@
                     <argument>--count</argument>
                     <argument>${count}</argument>
                     <argument>--persistent</argument>
-                    <argument>false</argument>
+                    <argument>true</argument>
+                    <argument>--parallelParis</argument>
+                    <argument>${parallel}</argument>
                     <argument>--brokerUrl</argument>
                     <argument>amqp://${brokerHost}:${brokerPort}</argument>
                   </arguments>

@@ -54,17 +54,21 @@ public class ThroughPut {
     private static String password;
     private static String clientId;
     private static boolean persistent = true;
+    private static int parallelProducers = 1;
+    private static int parallelConsumers = 1;
 
     private String payloadString;
-    private final int parallelProducer = 1;
-    private final int parallelConsumer = 1;
+
     private final Vector<Exception> exceptions = new Vector<Exception>();
     private ConnectionFactory factory;
+    final AtomicLong sharedReceivedCount = new AtomicLong();
+    final AtomicLong sharedSentCount = new AtomicLong();
 
     public static void main(String[] args) throws Exception {
 
         processArgs(args);
 
+        LOG.info("Doing {} {}byte messages across {} producer(s) and {} consumer(s)", count, size, parallelProducers, parallelConsumers);
         ThroughPut throughPut = new ThroughPut();
         throughPut.produceConsume();
     }
@@ -75,11 +79,10 @@ public class ThroughPut {
 
         final AtomicLong sharedSendCount = new AtomicLong(count);
         final AtomicLong sharedReceiveCount = new AtomicLong(count);
-
         long start = System.currentTimeMillis();
-        ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumer + parallelProducer);
+        ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumers + parallelProducers);
 
-        for (int i = 0; i < parallelConsumer; i++) {
+        for (int i = 0; i < parallelConsumers; i++) {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -92,8 +95,7 @@ public class ThroughPut {
             });
         }
 
-        TimeUnit.SECONDS.sleep(1);
-        for (int i = 0; i < parallelProducer; i++) {
+        for (int i = 0; i < parallelProducers; i++) {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -132,8 +134,17 @@ public class ThroughPut {
         Session session = connection.createSession(false, ActiveMQSession.AUTO_ACKNOWLEDGE);
         Queue queue = session.createQueue(destination);
         MessageConsumer consumer = session.createConsumer(queue);
-        while (count.decrementAndGet() > 0) {
-            consumer.receive(10000);
+        Message message;
+        long c;
+        while (count.get() > 0) {
+            message = consumer.receive(10000);
+            if (message != null) {
+                count.decrementAndGet();
+                c = sharedReceivedCount.incrementAndGet();
+                if (c % 1000 == 0) {
+                    LOG.info("Received {} messages", c);
+                }
+            }
         }
         consumer.close();
     }
@@ -149,8 +160,14 @@ public class ThroughPut {
         Message message = session.createBytesMessage();
         ((BytesMessage) message).writeBytes(payloadString.getBytes());
 
+        long c = 0;
         while (count.getAndDecrement() > 0) {
             producer.send(message);
+            c = sharedSentCount.incrementAndGet();
+            if (c % 1000 == 0) {
+                LOG.info("Sent {}", c);
+            }
+
         }
         producer.close();
         connection.close();
@@ -176,6 +193,13 @@ public class ThroughPut {
                     ThroughPut.user = shift(arg1);
                 } else if ("--password".equals(arg)) {
                     ThroughPut.password = shift(arg1);
+                } else if ("--parallelParis".equals(arg)) {
+                    ThroughPut.parallelConsumers = Integer.parseInt(shift(arg1));
+                    ThroughPut.parallelProducers = ThroughPut.parallelConsumers;
+                } else if ("--parallelProducers".equals(arg)) {
+                    ThroughPut.parallelProducers = Integer.parseInt(shift(arg1));
+                } else if ("--parallelConsumers".equals(arg)) {
+                    ThroughPut.parallelConsumers = Integer.parseInt(shift(arg1));
                 } else if ("--clientId".equals(arg)) {
                     ThroughPut.clientId = shift(arg1);
                 } else if ("--persistent".equals(arg)) {
