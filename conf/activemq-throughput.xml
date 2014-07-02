@@ -27,7 +27,7 @@
     <!--
         ACTIVEMQ_OPTS_MEMORY="-Xmx11g -Xms6g -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Djava.util.logging.config.file=logging.properties -XX:+UseLargePages"
     -->
-    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="throughput"
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="throughput-${id}"
             deleteAllMessagesOnStartup="true"
             persistent="true"
             advisorySupport="false"
@@ -66,7 +66,7 @@
         </systemUsage>
 
         <persistenceAdapter>
-            <kahaDB
+            <kahaDB directory="${activemq.data}/${id}"
                 cleanupInterval="300000" checkpointInterval="50000"
                 journalMaxWriteBatchSize="62k"
                 journalMaxFileLength="1g"

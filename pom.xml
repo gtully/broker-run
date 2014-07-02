@@ -24,7 +24,7 @@
   <artifactId>broker-run</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
-    <activemq.version>5.10.0</activemq.version>
+    <activemq.version>5.9.0.redhat-610-SNAPSHOT</activemq.version>
     <hawtjms.version>1.0-SNAPSHOT</hawtjms.version>
     <broker.host>0.0.0.0</broker.host>
     <broker.port>61616</broker.port>
@@ -37,23 +37,25 @@
     <role>producer</role>
     <count>50000</count>
     <messageSize>20480</messageSize>
-    <parallel>6</parallel>
+    <parallel>0</parallel>
+    <numProducers>1</numProducers>
+    <numConsumers>1</numConsumers>
     <numDests>0</numDests>
     <queuePrefetch>500</queuePrefetch>
-    <id></id>
+    <id>0</id>
   </properties>
   <repositories>
-  <repository>
-       <id>ea.fusesource.org</id>
-       <name>FuseSource Community Early Access Release Repository</name>
-       <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
-       <snapshots>
+    <repository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource Community Early Access Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+      <snapshots>
         <enabled>false</enabled>
-       </snapshots>
-       <releases>
+      </snapshots>
+      <releases>
         <enabled>true</enabled>
-       </releases>
-      </repository>
+      </releases>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -61,10 +63,10 @@
       <name>FuseSource Community Early Access Release Repository</name>
       <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
       <snapshots>
-       <enabled>false</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
-       <enabled>true</enabled>
+        <enabled>true</enabled>
       </releases>
     </pluginRepository>
   </pluginRepositories>
@@ -88,7 +90,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-client</artifactId>
+      <artifactId>activemq-all</artifactId>
       <version>${activemq.version}</version>
     </dependency>
     <dependency>
@@ -136,8 +138,10 @@
                     <argument>${count}</argument>
                     <argument>--persistent</argument>
                     <argument>true</argument>
-                    <argument>--parallelParis</argument>
-                    <argument>${parallel}</argument>
+                    <argument>--parallelProducers</argument>
+                    <argument>${numProducers}</argument>
+                    <argument>--parallelConsumers</argument>
+                    <argument>${numConsumers}</argument>
                     <argument>--destMod</argument>
                     <argument>${numDests}</argument>
                     <argument>--brokerUrl</argument>
@@ -151,7 +155,100 @@
       </build>
     </profile>
     <profile>
-      <id>openwire-pair</id>
+      <id>producer</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-classpath</argument>
+                    <classpath/>
+                    <argument>-Xmx1g</argument>
+                    <argument>-Xms1g</argument>
+                    <argument>org.gtully.jms.ThroughPut</argument>
+                    <argument>amqp</argument>
+                    <argument>--destination</argument>
+                    <argument>SomeQueue${id}</argument>
+                    <argument>--size</argument>
+                    <argument>${messageSize}</argument>
+                    <argument>--count</argument>
+                    <argument>${count}</argument>
+                    <argument>--persistent</argument>
+                    <argument>true</argument>
+                    <argument>--parallelProducers</argument>
+                    <argument>1</argument>
+                    <argument>--parallelConsumers</argument>
+                    <argument>0</argument>
+                    <argument>--brokerUrl</argument>
+                    <argument>amqp://${brokerHost}:${brokerPort}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>consumer</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-classpath</argument>
+                    <classpath/>
+                    <argument>-Xmx1g</argument>
+                    <argument>-Xms1g</argument>
+                    <argument>org.gtully.jms.ThroughPut</argument>
+                    <argument>amqp</argument>
+                    <argument>--destination</argument>
+                    <argument>SomeQueue${id}</argument>
+                    <argument>--size</argument>
+                    <argument>${messageSize}</argument>
+                    <argument>--count</argument>
+                    <argument>${count}</argument>
+                    <argument>--persistent</argument>
+                    <argument>true</argument>
+                    <argument>--parallelProducers</argument>
+                    <argument>0</argument>
+                    <argument>--parallelConsumers</argument>
+                    <argument>1</argument>
+                    <argument>--brokerUrl</argument>
+                    <argument>amqp://${brokerHost}:${brokerPort}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>ow-pair</id>
       <build>
         <defaultGoal>verify</defaultGoal>
         <plugins>
@@ -187,7 +284,7 @@
       </build>
     </profile>
     <profile>
-      <id>client</id>
+      <id>ow-client</id>
       <build>
         <defaultGoal>verify</defaultGoal>
         <plugins>
@@ -224,7 +321,7 @@
       </build>
     </profile>
     <profile>
-      <id>broker</id>
+      <id>brokerPlugin</id>
       <build>
         <defaultGoal>verify</defaultGoal>
         <plugins>
@@ -242,6 +339,10 @@
                   <configUri>xbean:file:conf/activemq-${config.type}.xml</configUri>
                   <fork>false</fork>
                   <systemProperties>
+                    <property>
+                      <name>id</name>
+                      <value>${id}</value>
+                    </property>
                     <property>
                       <name>brokerPort</name>
                       <value>${broker.port}</value>
@@ -261,6 +362,10 @@
                     <property>
                       <name>log4j.configuration</name>
                       <value>${project.baseUri}target/classes/log4j.properties</value>
+                    </property>
+                    <property>
+                      <name>activemq.data</name>
+                      <value>${project.build.directory}</value>
                     </property>
                   </systemProperties>
                 </configuration>
@@ -282,6 +387,111 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>brokerDist</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.8</version>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.apache.activemq</groupId>
+                      <artifactId>apache-activemq</artifactId>
+                      <version>${activemq.version}</version>
+                      <classifier>bin</classifier>>
+                      <type>tar.gz</type>
+                      <overWrite>false</overWrite>
+                    </artifactItem>
+                  </artifactItems>
+                  <outputDirectory>${project.build.directory}/dist</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <environmentVariables>
+                    <brokerHost>${broker.host}</brokerHost>
+                    <brokerPort>${broker.port}</brokerPort>
+                    <socketBufferSize>${socketBufferSize}</socketBufferSize>
+                    <ioBufferSize>${ioBufferSize}</ioBufferSize>
+                    <id>${id}</id>
+                  </environmentVariables>
+                  <executable>${project.build.directory}/dist/apache-activemq-${activemq.version}/bin/activemq
+                  </executable>
+                  <arguments>
+                    <argument>console</argument>
+                    <argument>xbean:file:conf/activemq-${config.type}.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>brokerMain</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-classpath</argument>
+                    <classpath/>
+                    <argument>-Xmx2g</argument>
+                    <argument>-Xms2g</argument>
+                    <argument>-Did=${id}</argument>
+                    <argument>-DbrokerPort=${broker.port}</argument>
+                    <argument>-DbrokerHost=${broker.host}</argument>
+                    <argument>-DsocketBufferSize=${socketBufferSize}</argument>
+                    <argument>-DioBufferSize=${ioBufferSize}</argument>
+                    <argument>-Dlog4j.configuration=${project.baseUri}target/classes/log4j.properties</argument>
+                    <argument>org.apache.activemq.console.Main</argument>
+                    <argument>start</argument>
+                    <argument>xbean:file:conf/activemq-${config.type}.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>

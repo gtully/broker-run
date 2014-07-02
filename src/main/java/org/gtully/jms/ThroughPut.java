@@ -204,9 +204,6 @@ public class ThroughPut {
                     ThroughPut.user = shift(arg1);
                 } else if ("--password".equals(arg)) {
                     ThroughPut.password = shift(arg1);
-                } else if ("--parallelParis".equals(arg)) {
-                    ThroughPut.parallelConsumers = Integer.parseInt(shift(arg1));
-                    ThroughPut.parallelProducers = ThroughPut.parallelConsumers;
                 } else if ("--parallelProducers".equals(arg)) {
                     ThroughPut.parallelProducers = Integer.parseInt(shift(arg1));
                 } else if ("--parallelConsumers".equals(arg)) {
