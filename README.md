@@ -9,7 +9,7 @@ A maven pom that will start an activemq instance in vm
 
  **Start a broker**
 
-    $> mvn -Pbroker
+    $> mvn -PbrokerPlugin
 
  **run a producer-consumer pair**
 
@@ -22,4 +22,12 @@ A maven pom that will start an activemq instance in vm
  **produce**
 
     $> mvn -Pclient -Drole=producer
+
+ *Specifying the activemq version*
+
+You can specify the version of ActivMQ by passing -Dactivemq.version=5.11-SNAPSHOT
+
+example:
+    $> mvn -PbrokerPlugin -Dactivemq.version=5.11-SNAPSHOT
+
 
