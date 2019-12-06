@@ -86,7 +86,6 @@ public class ThroughPut {
         for (int i = 0; i < parallelConsumers; i++) {
             final int id = i;
             executorService.execute(new Runnable() {
-                @Override
                 public void run() {
                     try {
                         consumeMessages(id, sharedReceiveCount);
@@ -100,7 +99,6 @@ public class ThroughPut {
         for (int i = 0; i < parallelProducers; i++) {
             final int id = i;
             executorService.execute(new Runnable() {
-                @Override
                 public void run() {
                     try {
                         publishMessages(id, sharedSendCount);
@@ -124,7 +122,7 @@ public class ThroughPut {
     private ConnectionFactory createConnectionFactory(String protocol) {
         ConnectionFactory connectionFactory = null;
         if ("amqp".equals(protocol)) {
-            connectionFactory = new io.hawtjms.jms.JmsConnectionFactory(brokerUrl);
+            connectionFactory = new org.apache.qpid.jms.JmsConnectionFactory (brokerUrl);
         } else {
             connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
         }

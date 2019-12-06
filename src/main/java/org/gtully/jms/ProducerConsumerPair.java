@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import io.fabric8.mq.Main;
+import org.apache.activemq.console.Main;
 
 public class ProducerConsumerPair {
 
@@ -44,7 +44,6 @@ public class ProducerConsumerPair {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new Runnable() {
-            @Override
             public void run() {
                 try {
                     Main.main(addArg("consumer", args));
