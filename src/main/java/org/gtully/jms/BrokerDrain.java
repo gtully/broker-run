@@ -111,7 +111,7 @@ public class BrokerDrain {
         ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumers + parallelProducers);
 
 
-        if (!publishOnly) {
+        if (parallelProducers > 0) {
             for (int i = 0; i < parallelProducers; i++) {
                 final int id = i;
                 executorService.execute(new Runnable() {
@@ -129,6 +129,13 @@ public class BrokerDrain {
                 Thread.sleep(200);
             }
 
+            if (publishOnly) {
+                LOG.info("Publish only Done!");
+                executorService.shutdown();
+                executorService.awaitTermination(30, TimeUnit.MINUTES);
+                brokerService.stop();
+                return;
+            }
         }
 
         if (block) {
@@ -177,7 +184,7 @@ public class BrokerDrain {
         Message message;
         long c;
         while (count.get() > 0) {
-            message = consumer.receive(10000);
+            message = consumer.receive(5000);
             if (message != null) {
                 count.decrementAndGet();
                 c = sharedReceivedCount.incrementAndGet();
@@ -267,5 +274,4 @@ public class BrokerDrain {
         }
         return argl.removeFirst();
     }
-
 }
