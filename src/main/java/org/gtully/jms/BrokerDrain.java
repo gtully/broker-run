@@ -63,6 +63,7 @@ public class BrokerDrain {
     private static int parallelProducers = 10;
     private static int parallelConsumers = 10;
     private static boolean block;
+    private static boolean publishOnly;
 
     private String payloadString;
 
@@ -110,29 +111,34 @@ public class BrokerDrain {
         ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumers + parallelProducers);
 
 
-        for (int i = 0; i < parallelProducers; i++) {
-            final int id = i;
-            executorService.execute(new Runnable() {
-                public void run() {
-                    try {
-                        publishMessages(id, sharedSendCount);
-                    } catch (Exception e) {
-                        exceptions.add(e);
+        if (!publishOnly) {
+            for (int i = 0; i < parallelProducers; i++) {
+                final int id = i;
+                executorService.execute(new Runnable() {
+                    public void run() {
+                        try {
+                            publishMessages(id, sharedSendCount);
+                        } catch (Exception e) {
+                            exceptions.add(e);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        while (sharedSendCount.get() > 0 ) {
-            Thread.sleep(200);
-        }
+            while (sharedSendCount.get() > 0) {
+                Thread.sleep(200);
+            }
 
-        LOG.info("Starting drain...");
+        }
 
         if (block) {
+            LOG.info("blocking on read system.in...");
+
             System.out.println("Type a key to continue...");
             System.in.read();
         }
+
+        LOG.info("Starting drain...");
 
         long start = System.currentTimeMillis();
 
@@ -244,6 +250,8 @@ public class BrokerDrain {
                     BrokerDrain.persistent = Boolean.valueOf(shift(arg1)).booleanValue();
                 } else if ("--block".equals(arg)) {
                     BrokerDrain.block = Boolean.valueOf(shift(arg1)).booleanValue();
+                } else if ("--publishOnly".equals(arg)) {
+                    BrokerDrain.publishOnly = Boolean.valueOf(shift(arg1)).booleanValue();
                 } else {
                     System.err.println("Invalid usage: unknown option: " + arg);
                 }
