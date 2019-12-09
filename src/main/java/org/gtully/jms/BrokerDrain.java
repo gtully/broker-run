@@ -55,7 +55,7 @@ public class BrokerDrain {
     private static int count = 100000;
     private static long sleep;
     private static String destination = "TestQueue";
-    private static int destMod = 4;
+    private static int destMod = 0;
     private static String user;
     private static String password;
     private static String clientId;
